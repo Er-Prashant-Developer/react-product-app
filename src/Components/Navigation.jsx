@@ -1,6 +1,6 @@
 import React, { useContext, useEffect } from 'react'
 import { ProductContext } from '../Utils/Context'
-import { set } from 'react-hook-form'
+
 import { Link } from 'react-router-dom'
 
 function Navigation() {
