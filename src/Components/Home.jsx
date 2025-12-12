@@ -5,66 +5,50 @@ import { ProductContext } from "../Utils/Context";
 import axios from "../Utils/Axios";
 
 function Home() {
-  let [product, setProduct] = useContext(ProductContext);
-;
-  let { search } = useLocation();
+  const [product] = useContext(ProductContext);
+  const { search } = useLocation();
+  const category = decodeURIComponent(search.split("=")[1]);
 
-  let category = decodeURIComponent(search.split("=")[1]);
-  
-
-  let [filteredProducts, setfilteredProducts] = useState(null);
-
-  const getcategorydata = async () => {
-    try {
-      const { data } = await axios.get(`/products/category/${category}`);
-      setfilteredProducts(data);
-    } catch (error) {
-      console.log(error);
-    }
-  };
+  const [filteredProducts, setFilteredProducts] = useState(null);
 
   useEffect(() => {
-    if (!filteredProducts || category=='undefined') setfilteredProducts(product);
-    if (category != "undefined") {
-      // getcategorydata();
-
-      setfilteredProducts(product.filter(p=>p.category == category))
-
+    if (!filteredProducts || category === "undefined") {
+      setFilteredProducts(product);
+    } else if (category !== "undefined") {
+      setFilteredProducts(product.filter((p) => p.category === category));
     }
   }, [category, product]);
 
-  return product ? (
-    <div className="flex w-full h-screen">
+  if (!product) return <div>Loading...</div>;
+
+  return (
+    <div className="flex flex-col md:flex-row min-h-screen">
       <Navigation />
 
-      <div className="p-4 flex overflow-x-hidden overflow-y-auto items-start justify-start flex-wrap gap-4 w-[85%]">
-        {filteredProducts && 
-        filteredProducts.map((p, id) => (
-          <ul
-            key={id}
-            className="card mt-8 rounded-xl bg-white shadow-md hover:shadow-xl transition-all duration-300 
-                       border p-3 w-[18%] h-[280px] flex flex-col items-center"
-          >
-            <Link
-              to={`/userDetails/${p.id}`}
-              className="flex flex-col h-full w-full justify-between items-center"
+      <div className="p-4 flex-1 flex flex-wrap gap-6 justify-center md:justify-start overflow-y-auto">
+        {filteredProducts &&
+          filteredProducts.map((p) => (
+            <div
+              key={p.id}
+              className="bg-white rounded-xl shadow-md hover:shadow-xl transition-shadow duration-300 border w-full sm:w-[48%] md:w-[30%] lg:w-[22%] flex flex-col items-center p-3"
             >
-              <img
-                className="mt-2 w-full h-[180px] object-contain transition-transform duration-300 hover:scale-105"
-                src={p.image}
-                alt=""
-              />
-
-              <h1 className="text-sm font-semibold text-center mt-2 line-clamp-2">
-                {p.title}
-              </h1>
-            </Link>
-          </ul>
-        ))}
+              <Link
+                to={`/userDetails/${p.id}`}
+                className="flex flex-col h-full w-full justify-between items-center"
+              >
+                <img
+                  src={p.image}
+                  alt={p.title}
+                  className="w-full h-[180px] object-contain transition-transform duration-300 hover:scale-105"
+                />
+                <h1 className="text-sm font-semibold text-center mt-2 line-clamp-2">
+                  {p.title}
+                </h1>
+              </Link>
+            </div>
+          ))}
       </div>
     </div>
-  ) : (
-    "Loading"
   );
 }
 

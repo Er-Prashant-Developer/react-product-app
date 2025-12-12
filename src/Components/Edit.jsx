@@ -1,125 +1,113 @@
 import React, { useContext, useEffect, useState } from "react";
 import { ProductContext } from "../Utils/Context";
 import { useNavigate, useParams } from "react-router-dom";
-import { nanoid } from "nanoid";
 import { toast } from "react-toastify";
 
 function Edit() {
-  let [product, setproduct] = useContext(ProductContext);
-  let [editpro, seteditpro] = useState({
-    title:"",
-    description:"",
-    image:"",
-    price:"",
-    category:"",
+  const [product, setProduct] = useContext(ProductContext);
+  const [editPro, setEditPro] = useState({
+    title: "",
+    description: "",
+    image: "",
+    price: "",
+    category: "",
   });
-
-  const handleonchange = (e) => {
-    // console.log(e.target.name,e.target.value)
-    seteditpro({ ...editpro, [e.target.name]: e.target.value });
-    
-  };
-
 
   const { id } = useParams();
   const navigate = useNavigate();
 
-  const addproductHandler = (e) => {
+  useEffect(() => {
+    const currentProduct = product.find((p) => p.id === id);
+    if (currentProduct) setEditPro(currentProduct);
+  }, [id, product]);
+
+  const handleOnChange = (e) => {
+    setEditPro({ ...editPro, [e.target.name]: e.target.value });
+  };
+
+  const editProductHandler = (e) => {
     e.preventDefault();
 
     if (
-      editpro.title.trim().length < 5 ||
-      editpro.image.trim().length < 5 ||
-      editpro.category.trim().length < 5 ||
-      editpro.price.trim().length < 1 ||
-      editpro.description.trim().length < 5
+      editPro.title.trim().length < 5 ||
+      editPro.image.trim().length < 5 ||
+      editPro.category.trim().length < 5 ||
+      editPro.price.trim().length < 1 ||
+      editPro.description.trim().length < 5
     ) {
-      alert("No field must be empty and least contain 4 charter");
+      alert("No field must be empty and must contain at least 4 characters");
       return;
     }
 
-    // let copydata=editpro.filter((p) => p.id == id)
-    
-    const epi = product.findIndex((p) => p.id == id);
+    const index = product.findIndex((p) => p.id === id);
+    const updatedProducts = [...product];
+    updatedProducts[index] = { ...updatedProducts[index], ...editPro };
 
-    const copydata = [...product];
-
-    copydata[epi] = {...product[epi],...editpro};
-    
-    console.log(editpro,copydata);
-
-   
-
-    setproduct(copydata);
-
-    localStorage.setItem("product", JSON.stringify(copydata));
-    toast.success("Product Edit Successfully")
-    
+    setProduct(updatedProducts);
+    localStorage.setItem("product", JSON.stringify(updatedProducts));
+    toast.success("Product Edited Successfully");
     navigate("/");
   };
 
-  // console.log(id)
-
-  useEffect(() => {
-    seteditpro(product.filter((p) => p.id == id)[0]);
-  }, [id]);
-
   return (
-    <form
-      onSubmit={addproductHandler}
-      className="flex flex-col  items-center border p-[5%] w-screen h-screen"
-    >
-      <h1 className="mb-5 w-1/2 text-3xl">Edit Product</h1>
-      <input
-        type="url"
-        placeholder="image link"
-        className="text-2xl bg-zinc-300 rounded p-3 w-1/2 mb-3"
-        onChange={handleonchange}
-        name="image"
-        value={editpro && editpro.image}
-      />
+    <div className="flex justify-center items-center min-h-screen bg-gray-100 p-4">
+      <form
+        onSubmit={editProductHandler}
+        className="bg-white shadow-md rounded-lg w-full max-w-2xl p-6 md:p-10 flex flex-col gap-4"
+      >
+        <h1 className="text-3xl font-semibold mb-6 text-center">Edit Product</h1>
 
-      <input
-        type="text"
-        placeholder="Title"
-        className="text-2xl bg-zinc-300 rounded p-3 w-1/2 mb-3"
-        onChange={handleonchange}
-        name="title"
-        value={editpro && editpro.title}
-      />
-      <div className="w-1/2 flex gap-5">
+        <input
+          type="url"
+          placeholder="Image link"
+          name="image"
+          value={editPro?.image || ""}
+          onChange={handleOnChange}
+          className="border border-gray-300 rounded-lg p-3 w-full focus:outline-none focus:ring-2 focus:ring-blue-400"
+        />
+
         <input
           type="text"
-          placeholder="category"
-          className="text-2xl bg-zinc-300 rounded p-3 w-[50%] mb-3"
-          onChange={handleonchange}
-          name="category"
-          value={editpro && editpro.category}
+          placeholder="Title"
+          name="title"
+          value={editPro?.title || ""}
+          onChange={handleOnChange}
+          className="border border-gray-300 rounded-lg p-3 w-full focus:outline-none focus:ring-2 focus:ring-blue-400"
         />
 
-        <input
-          type="number"
-          placeholder="price"
-          className="text-2xl bg-zinc-300 rounded p-3 w-[50%] mb-3"
-          onChange={handleonchange}
-          name="price"
-          value={editpro && editpro.price}
+        <div className="flex flex-col md:flex-row gap-4">
+          <input
+            type="text"
+            placeholder="Category"
+            name="category"
+            value={editPro?.category || ""}
+            onChange={handleOnChange}
+            className="border border-gray-300 rounded-lg p-3 flex-1 focus:outline-none focus:ring-2 focus:ring-blue-400"
+          />
+          <input
+            type="number"
+            placeholder="Price"
+            name="price"
+            value={editPro?.price || ""}
+            onChange={handleOnChange}
+            className="border border-gray-300 rounded-lg p-3 flex-1 focus:outline-none focus:ring-2 focus:ring-blue-400"
+          />
+        </div>
+
+        <textarea
+          name="description"
+          placeholder="Description"
+          rows="5"
+          value={editPro?.description || ""}
+          onChange={handleOnChange}
+          className="border border-gray-300 rounded-lg p-3 w-full focus:outline-none focus:ring-2 focus:ring-blue-400"
         />
-      </div>
-      <textarea
-        name="description"
-        className="text-2xl bg-zinc-300 rounded p-3 w-1/2 mb-3"
-        rows="5"
-        onChange={handleonchange}
-        value={editpro && editpro.description}
-        placeholder="description"
-      ></textarea>
-      <div className="w-1/2">
-        <button className="px-2 py-1 bg-blue-300 rounded-md ">
+
+        <button className="bg-blue-500 text-white font-semibold py-3 rounded-lg hover:bg-blue-600 transition-colors">
           Edit Product
         </button>
-      </div>
-    </form>
+      </form>
+    </div>
   );
 }
 

@@ -1,28 +1,30 @@
-
-import axios from './Axios'
 import React, { createContext, useEffect, useState } from 'react'
+import axios from './Axios'
 
-export const ProductContext=createContext()
-function Context(props) {
+export const ProductContext = createContext()
 
-  let [product,setProduct]=useState(JSON.parse(localStorage.getItem("product"))||null)
+function Context({ children }) {
+  const [product, setProduct] = useState(
+    JSON.parse(localStorage.getItem("product")) || []
+  )
 
-  const getProducts=async()=>{
-    try {
-      const {data}=await axios.get("/products")
-     setProduct(data)
-    } catch (error) {
-      console.log(error)
+  useEffect(() => {
+    const getProducts = async () => {
+      try {
+        const { data } = await axios.get("/products")
+        setProduct(data)
+      } catch (error) {
+        console.error("Failed to fetch products:", error)
+      }
     }
-  }
-// console.log(product)
-  useEffect((()=>{getProducts()}),[])
+
+    getProducts()
+  }, [])
 
   return (
-    <div><ProductContext.Provider value={[product,setProduct]}>
-    {props.children}</ProductContext.Provider>
-    </div>
-  
+    <ProductContext.Provider value={[product, setProduct]}>
+      {children}
+    </ProductContext.Provider>
   )
 }
 

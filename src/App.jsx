@@ -1,15 +1,24 @@
 import React from "react";
-import Home from "./Components/Home";
-import { Routes, Route, Link, useLoaderData, useLocation } from "react-router-dom";
-import UserDetails from "./Components/UserDetails";
+import { Link, useLocation } from "react-router-dom";
 import Routing from "./Components/Routing";
+
 function App() {
-  const{search,pathname}=useLocation()
+  const { search, pathname } = useLocation();
+
   return (
-    <div className="w-full h-screen">
-      {(pathname!='/' || search.length>0) && ( <Link className="bg-pink-100 absolute left-[17%] top-[3%]" to='/'>Home</Link>)}
-    
-    <Routing> </Routing>
+    <div className="w-full min-h-screen bg-gray-100 relative">
+      {/* Conditional Home Button */}
+      {(pathname !== "/" || search.length > 0) && (
+        <Link
+          to="/"
+          className="bg-pink-100 text-gray-800 font-semibold px-4 py-2 rounded shadow absolute left-4 top-4 hover:bg-pink-200 transition"
+        >
+          Home
+        </Link>
+      )}
+
+      {/* Routes */}
+      <Routing />
     </div>
   );
 }

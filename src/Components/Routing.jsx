@@ -7,13 +7,13 @@ import Edit from './Edit'
 
 function Routing() {
   return (
-    <div>
-        <Routes>
-        <Route path="/" element={<Home></Home>} />
-        <Route path='/create' element={<Create/>}></Route>
-        <Route path="/UserDetails/:id" element={<UserDetails/>}/>
-        <Route path='/edit/:id' element={<Edit/>}/>
-        </Routes>
+    <div className="min-h-screen bg-gray-100">
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/create" element={<Create />} />
+        <Route path="/userDetails/:id" element={<UserDetails />} />
+        <Route path="/edit/:id" element={<Edit />} />
+      </Routes>
     </div>
   )
 }
