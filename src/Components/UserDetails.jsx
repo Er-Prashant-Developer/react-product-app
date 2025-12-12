@@ -27,7 +27,7 @@ const navigate=useNavigate()
 const filterdeleteproducts=product.filter(p=>p.id!=id)
 setproduct(filterdeleteproducts)
 localStorage.setItem("product",JSON.stringify(filterdeleteproducts))
-toast.success("Product Deleted Successfully")
+toast.success("Product Deleted")
 navigate("/")
   }
 
